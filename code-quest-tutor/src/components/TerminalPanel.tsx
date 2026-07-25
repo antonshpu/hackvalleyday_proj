@@ -15,14 +15,14 @@ export function TerminalPanel() {
 
     const term = new Terminal({
       theme: {
-        background: '#f8edd4',
-        foreground: '#3b2415',
-        cursor: '#8b4e24',
-        selectionBackground: '#c47a3a55',
+        background: '#000000',
+        foreground: '#ffffff',
+        cursor: '#ffffff',
+        selectionBackground: '#ffffff33',
       },
       fontFamily: '"Press Start 2P", monospace',
-      fontSize: 10,
-      lineHeight: 16,
+      fontSize: 12,
+      lineHeight: 1.4,
       cursorBlink: true,
       convertEol: true,
     });

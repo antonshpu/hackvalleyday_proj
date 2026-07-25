@@ -4,6 +4,7 @@ import { useGameState } from '../hooks/useGameState';
 import type { ProfileApi } from '../hooks/useProfile';
 import { mockGenerateHint, mockValidateCode } from '../data/mockGemini';
 import { PlatformProgressBar } from './PlatformProgressBar';
+import { PlatformerTrack } from './PlatformerTrack';
 import { StatusFooter } from './StatusFooter';
 import { FileExplorer } from './FileExplorer';
 import { EditorPanel } from './EditorPanel';
@@ -50,6 +51,8 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
     setIsChecking(true);
     setFeedback(null);
     setValidationErrors(null);
+    setCharacterState('CASTING');
+
     const result = await mockValidateCode(code, currentTask);
     setIsChecking(false);
 
@@ -58,17 +61,20 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
       setCharacterState('WALKING');
       setFeedback(result.feedback);
       setTimeout(() => {
-        setCharacterState('JUMPING');
+        setCharacterState('PUSHING');
         setTimeout(() => {
-          const finishedLevel = isLastTaskInLevel;
-          awardXpAndAdvance(level.xpReward, isLastTaskInLevel, isLastLevel);
-          if (finishedLevel) {
-            setShowLevelComplete(true);
-            setCharacterState('CELEBRATING');
-          } else {
-            setCharacterState('IDLE');
-          }
-        }, 650);
+          setCharacterState('JUMPING');
+          setTimeout(() => {
+            const finishedLevel = isLastTaskInLevel;
+            awardXpAndAdvance(level.xpReward, isLastTaskInLevel, isLastLevel);
+            if (finishedLevel) {
+              setShowLevelComplete(true);
+              setCharacterState('CELEBRATING');
+            } else {
+              setCharacterState('IDLE');
+            }
+          }, 650);
+        }, 400);
       }, 400);
     } else {
       setCharacterState('FAILING');
@@ -114,6 +120,14 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
         currentStageIndex={state.currentLevelIndex}
         rewardStars={Math.max(1, Math.round(level.xpReward / 100))}
       />
+
+      <div className="px-4 py-4">
+        <PlatformerTrack
+          tasks={level.tasks}
+          currentTaskIndex={state.currentTaskIndex}
+          characterState={state.characterState}
+        />
+      </div>
 
       <div className="flex-1 min-h-0 overflow-hidden px-4 py-4">
         <div className="grid h-full min-h-0 grid-cols-[24%_1.1fr_26%] gap-4">

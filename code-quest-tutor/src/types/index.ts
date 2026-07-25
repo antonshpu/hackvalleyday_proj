@@ -1,6 +1,7 @@
 export type CharacterState =
   | 'IDLE'
   | 'WALKING'
+  | 'PUSHING'
   | 'JUMPING'
   | 'FALLING'
   | 'CELEBRATING'
@@ -49,6 +50,7 @@ export interface ValidationResult {
   matchedTasks: string[];
   errorLines?: number[];
   errorMessage?: string;
+  errors?: { message: string; line: number }[];
 }
 
 export interface HintResult {

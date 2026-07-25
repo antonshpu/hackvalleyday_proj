@@ -11,6 +11,7 @@ import type { CharacterState } from '../types';
 
 const STATIC_SPRITE: Record<Exclude<CharacterState, 'WALKING'>, string> = {
   IDLE: idle,
+  PUSHING: idle,
   CASTING: casting,
   FAILING: failing,
   JUMPING: jumping,
@@ -21,6 +22,7 @@ const STATIC_SPRITE: Record<Exclude<CharacterState, 'WALKING'>, string> = {
 const ANIMATION_CLASS: Record<CharacterState, string> = {
   IDLE: 'sprite-bob',
   WALKING: 'sprite-walk',
+  PUSHING: 'sprite-push',
   CASTING: 'sparkle',
   FAILING: '',
   JUMPING: 'sprite-jump',

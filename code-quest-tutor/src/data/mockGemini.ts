@@ -238,6 +238,19 @@ function genericPlan(name: string): ProjectPlan {
 }
 
 export async function mockBreakdownProject(prompt: string): Promise<ProjectPlan> {
+  try {
+    const response = await fetch('/api/gemini/breakdown', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    });
+    if (response.ok) {
+      return (await response.json()) as ProjectPlan;
+    }
+  } catch {
+    // fall back to the local project generator
+  }
+
   await wait(1400);
   const lower = prompt.toLowerCase();
   if (lower.includes('flappy')) return TEMPLATES.flappy(prompt);
@@ -249,9 +262,23 @@ export async function mockValidateCode(
   code: string,
   task: { title: string; solutionHint: string[] }
 ): Promise<ValidationResult> {
+  try {
+    const response = await fetch('/api/gemini/validate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ code, task }),
+    });
+
+    if (response.ok) {
+      return (await response.json()) as ValidationResult;
+    }
+  } catch {
+    // ignore fetch errors and fall back to local validation
+  }
+
   await wait(700);
-  // Heuristic "validator": correct if the task marker comment was removed
-  // or replaced with real code (more than just whitespace/comment).
   const withoutMarkerLine = code
     .split('\n')
     .filter((line) => !line.includes('🟡 TASK'))
@@ -299,6 +326,19 @@ export async function mockGenerateHint(
   task: { title: string; solutionHint: string[] },
   hintLevel: number
 ): Promise<HintResult> {
+  try {
+    const response = await fetch('/api/gemini/hint', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ task, hintLevel }),
+    });
+    if (response.ok) {
+      return (await response.json()) as HintResult;
+    }
+  } catch {
+    // fall back to local hint generation
+  }
+
   await wait(600);
   const hints = task.solutionHint;
   const idx = Math.min(hintLevel, hints.length - 1);

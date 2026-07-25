@@ -35,12 +35,17 @@ export function PlatformerTrack({ tasks, currentTaskIndex, characterState }: Pro
       <div className="absolute bottom-6 left-4 right-4 h-10 rounded-full bg-ink-900 pointer-events-none opacity-95 z-0" />
       <div className="absolute bottom-6 left-4 right-4 flex items-center justify-between pointer-events-none z-0 px-4">
         {tasks.map((_, i) => (
-          <div key={i} className="h-8 w-0.5 rounded-full bg-ink-700" />
+          <div
+            key={`segment-${i}`}
+            className={`h-8 w-0.5 rounded-full transition-colors duration-300 ${
+              i <= currentTaskIndex ? 'bg-gold-400' : 'bg-ink-700'
+            }`}
+          />
         ))}
       </div>
 
       {/* Sliding Character Runner across the map */}
-      <div 
+      <div
         className="absolute bottom-6 transition-all duration-500 ease-out z-20 pointer-events-none"
         style={{ left: `calc(1rem + ${progressPercent}% * 0.85 - 24px)` }}
       >
@@ -49,34 +54,32 @@ export function PlatformerTrack({ tasks, currentTaskIndex, characterState }: Pro
 
       <div className="relative flex items-end gap-3 min-h-[128px] z-10">
         {tasks.map((task, i) => {
+          const isFinish = i === totalTasks - 1;
           const isCurrent = i === currentTaskIndex;
-          const isDone = task.completed;
+          const isDone = i < currentTaskIndex;
+          const markerClass = isFinish
+            ? 'w-4 h-4 rounded-full border-2 border-gold-600 bg-gold-300 shadow-[0_0_10px_rgba(234,179,8,0.55)]'
+            : isDone
+            ? 'w-3 h-3 rounded-full border-2 border-gold-600 bg-gold-400 shadow-[0_0_8px_rgba(234,179,8,0.6)]'
+            : isCurrent
+            ? 'w-3 h-3 rounded-full border-2 border-arcane-200 bg-arcane-400 animate-pulse'
+            : 'w-3 h-3 rounded-full border-2 border-ink-600 bg-ink-700';
+          const stageBarClass = isFinish
+            ? 'w-full h-4 rounded-sm border-2 bg-gold-500 border-gold-700'
+            : isDone
+            ? 'w-full h-4 rounded-sm border-2 bg-gold-500 border-gold-700'
+            : isCurrent
+            ? 'w-full h-4 rounded-sm border-2 bg-arcane-400 border-arcane-500'
+            : 'w-full h-4 rounded-sm border-2 bg-ink-600 border-ink-700';
+
           return (
             <div key={task.id} className="flex flex-col items-center flex-1 min-w-0">
               <div className="h-16 flex items-end justify-center w-full relative">
-                {/* Checkpoint marker pin or node indicator */}
-                <div 
-                  className={`w-3 h-3 rounded-full border-2 transition-all ${
-                    isDone 
-                      ? 'bg-gold-400 border-gold-600 shadow-[0_0_8px_rgba(234,179,8,0.6)]' 
-                      : isCurrent 
-                      ? 'bg-arcane-400 border-arcane-200 animate-pulse' 
-                      : 'bg-ink-700 border-ink-600'
-                  }`} 
-                />
+                <div className={`${markerClass} transition-all duration-300`} />
               </div>
-              <div
-                className={`w-full h-4 rounded-sm border-2 ${
-                  isDone
-                    ? 'bg-gold-500 border-gold-700'
-                    : isCurrent
-                    ? 'bg-arcane-400 border-arcane-500'
-                    : 'bg-ink-600 border-ink-700'
-                }`}
-                title={task.title}
-              />
+              <div className={stageBarClass} title={task.title} />
               <span className="mt-1 text-[9px] font-mono text-parchment-300 truncate w-full text-center">
-                {i + 1}. {task.title}
+                {isFinish ? 'FIN' : `${i + 1}`}
               </span>
             </div>
           );
