@@ -9,8 +9,6 @@ import { FileExplorer } from './FileExplorer';
 import { EditorPanel } from './EditorPanel';
 import { TaskChecklist } from './TaskChecklist';
 import { ActionButtons } from './ActionButtons';
-import { OutputPreview } from './OutputPreview';
-import { TerminalPanel } from './TerminalPanel';
 import { LevelCompleteOverlay } from './LevelCompleteOverlay';
 
 interface Props {
@@ -155,8 +153,8 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 min-h-0">
-            <div className="bread-loaf h-[520px] min-h-[520px] overflow-hidden p-2">
+          <div className="flex flex-col min-h-0 h-full">
+            <div className="bread-loaf h-[340px] min-h-[280px] shrink-0 overflow-hidden p-2 mt-auto">
               <div className="h-full overflow-hidden rounded-[14px] border-[3px] border-[#5c3a22] bg-[#12100C]">
                 <EditorPanel
                   level={level}
@@ -167,51 +165,41 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 min-h-0">
-              <div className="bread-loaf h-64 overflow-hidden p-2">
-                <div className="h-full overflow-hidden rounded-[14px] border-[3px] border-[#8b4e24]">
-                  <OutputPreview code={code} language={level.language} />
-                </div>
-              </div>
-              <div className="bread-loaf h-44 overflow-hidden p-2">
-                <div className="h-full overflow-hidden rounded-[14px] border-[3px] border-[#8b4e24]">
-                  <TerminalPanel />
-                </div>
-              </div>
-            </div>
           </div>
 
-          <div className="flex flex-col gap-4 min-h-0">
-            <div className="bread-loaf p-4">
-              <span className="text-[9px] uppercase tracking-[0.35em] bread-muted font-pixel">
-                Current Objective
-              </span>
-              <h3 className="mt-3 text-lg font-semibold bread-strong">{currentTask?.title}</h3>
-              <p className="mt-2 text-sm bread-muted leading-relaxed">{currentTask?.description}</p>
+          <div className="flex flex-col gap-4 min-h-0 h-full">
+            <div className="mt-auto flex flex-col gap-4 min-h-0">
+              <div className="bread-loaf p-4 shrink-0">
+                <span className="text-[9px] uppercase tracking-[0.35em] bread-muted font-pixel">
+                  Current Objective
+                </span>
+                <h3 className="mt-3 text-lg font-semibold bread-strong">{currentTask?.title}</h3>
+                <p className="mt-2 text-sm bread-muted leading-relaxed">{currentTask?.description}</p>
+              </div>
+
+              <div className="bread-loaf p-3 shrink-0">
+                <TaskChecklist tasks={level.tasks} currentTaskIndex={state.currentTaskIndex} />
+              </div>
+
+              {feedback && (
+                <div
+                  className={`bread-crumb px-4 py-3 text-sm font-medium shrink-0 ${
+                    feedback.startsWith('Nice') ? 'text-[#5a7a2a]' : 'text-[#a33b2a]'
+                  }`}
+                >
+                  {feedback}
+                </div>
+              )}
+
+              {hintText && (
+                <div className="bread-crumb px-4 py-3 text-sm bread-strong shrink-0">
+                  <div className="text-[9px] uppercase tracking-[0.35em] bread-muted font-pixel">Hint</div>
+                  <p className="mt-2">{hintText}</p>
+                </div>
+              )}
             </div>
 
-            <div className="bread-loaf p-3">
-              <TaskChecklist tasks={level.tasks} currentTaskIndex={state.currentTaskIndex} />
-            </div>
-
-            {feedback && (
-              <div
-                className={`bread-crumb px-4 py-3 text-sm font-medium ${
-                  feedback.startsWith('Nice') ? 'text-[#5a7a2a]' : 'text-[#a33b2a]'
-                }`}
-              >
-                {feedback}
-              </div>
-            )}
-
-            {hintText && (
-              <div className="bread-crumb px-4 py-3 text-sm bread-strong">
-                <div className="text-[9px] uppercase tracking-[0.35em] bread-muted font-pixel">Hint</div>
-                <p className="mt-2">{hintText}</p>
-              </div>
-            )}
-
-            <div className="mt-auto">
+            <div className="shrink-0">
               <ActionButtons
                 onHint={handleHint}
                 onCheck={handleCheck}
