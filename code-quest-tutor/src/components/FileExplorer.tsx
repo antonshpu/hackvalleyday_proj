@@ -7,14 +7,12 @@ interface Props {
 
 export function FileExplorer({ levels, currentLevelIndex }: Props) {
   return (
-    <aside className="h-full bg-ink-800 border-r-2 border-ink-600 overflow-y-auto">
-      <div className="px-3 py-2.5 border-b border-ink-700">
-        <span className="font-pixel text-[9px] text-parchment-300/70 tracking-wider">
-          PROJECT FILES
-        </span>
+    <aside className="h-full overflow-y-auto">
+      <div className="px-3 py-2.5 border-b-[3px] border-[#8b4e24]/80">
+        <span className="font-pixel text-[9px] text-[#5c3a22] tracking-wider">PROJECT FILES</span>
       </div>
       <div className="py-2">
-        <div className="px-3 py-1 text-xs font-mono text-parchment-300/60 flex items-center gap-1.5">
+        <div className="px-3 py-1 text-xs font-mono text-[#7a5230] flex items-center gap-1.5">
           <span aria-hidden>📁</span> src
         </div>
         <ul>
@@ -26,8 +24,8 @@ export function FileExplorer({ levels, currentLevelIndex }: Props) {
                 <div
                   className={`flex items-center gap-1.5 pl-7 pr-3 py-1.5 text-xs font-mono cursor-default ${
                     isCurrent
-                      ? 'bg-gold-500/10 text-gold-300 border-l-2 border-gold-400'
-                      : 'text-parchment-300/70 border-l-2 border-transparent'
+                      ? 'bg-[#c47a3a]/25 text-[#3b2415] border-l-[3px] border-[#8b4e24] font-semibold'
+                      : 'text-[#7a5230] border-l-[3px] border-transparent'
                   }`}
                 >
                   <span aria-hidden>{isDone ? '✅' : '📄'}</span>

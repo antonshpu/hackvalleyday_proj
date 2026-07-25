@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { ProjectPlan, Task } from '../types';
+import type { ProjectPlan } from '../types';
 import { useGameState } from '../hooks/useGameState';
 import type { ProfileApi } from '../hooks/useProfile';
 import { mockGenerateHint, mockValidateCode } from '../data/mockGemini';
@@ -7,7 +7,6 @@ import { PlatformProgressBar } from './PlatformProgressBar';
 import { StatusFooter } from './StatusFooter';
 import { FileExplorer } from './FileExplorer';
 import { EditorPanel } from './EditorPanel';
-import { PlatformerTrack } from './PlatformerTrack';
 import { TaskChecklist } from './TaskChecklist';
 import { ActionButtons } from './ActionButtons';
 import { OutputPreview } from './OutputPreview';
@@ -53,37 +52,33 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
     setValidationErrors(null);
     const result = await mockValidateCode(code, currentTask);
     setIsChecking(false);
-    setFeedback(result.feedback);
-
-    if (!result.correct) {
-      setValidationErrors({
-        message: result.errorMessage ?? result.feedback,
-        lines: result.errorLines ?? [1],
-      });
-    } else {
-      setValidationErrors(null);
-    }
 
     if (result.correct) {
-      currentTask.completed = true;
       setCharacterState('WALKING');
+      setFeedback(result.feedback);
       setTimeout(() => {
-        if (isLastTaskInLevel) {
-          level.completed = true;
-          setCharacterState('JUMPING');
-          profile.addXp(level.xpReward);
-          if (isLastLevel) profile.completeProject();
-          awardXpAndAdvance(level.xpReward, true, isLastLevel);
-          setTimeout(() => setShowLevelComplete(true), 900);
-        } else {
-          setCharacterState('IDLE');
-          profile.addXp(25);
-          awardXpAndAdvance(25, false, isLastLevel);
-        }
-      }, 650);
+        setCharacterState('JUMPING');
+        setTimeout(() => {
+          const finishedLevel = isLastTaskInLevel;
+          awardXpAndAdvance(level.xpReward, isLastTaskInLevel, isLastLevel);
+          if (finishedLevel) {
+            setShowLevelComplete(true);
+            setCharacterState('CELEBRATING');
+          } else {
+            setCharacterState('IDLE');
+          }
+        }, 650);
+      }, 400);
     } else {
       setCharacterState('FAILING');
       setTimeout(() => setCharacterState('IDLE'), 700);
+      setFeedback(result.feedback);
+      if (result.errors?.length) {
+        setValidationErrors({
+          message: result.errors[0].message,
+          lines: result.errors.map((e) => e.line),
+        });
+      }
     }
   }
 
@@ -91,19 +86,16 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
     if (!currentTask) return;
     setIsHinting(true);
     setCharacterState('CASTING');
-    const result = await mockGenerateHint(currentTask, hintLevel);
-    setIsHinting(false);
+    const next = Math.min(hintLevel + 1, 3);
+    const result = await mockGenerateHint(currentTask, next);
+    setHintLevel(result.hintLevel);
     setHintText(result.hint);
-    setHintLevel((h) => Math.min(h + 1, currentTask.solutionHint.length - 1));
+    setIsHinting(false);
     setCharacterState('IDLE');
   }
 
   function handleResources() {
-    window.open(
-      'https://developer.mozilla.org/en-US/search?q=' + encodeURIComponent(currentTask?.title ?? ''),
-      '_blank',
-      'noopener'
-    );
+    window.open('https://developer.mozilla.org/', '_blank', 'noopener,noreferrer');
   }
 
   function handleContinue() {
@@ -112,7 +104,10 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
   }
 
   return (
-    <div className="h-full flex flex-col bg-ink-950">
+    <div
+      className="h-full flex flex-col bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/coding-bg.png')" }}
+    >
       <PlatformProgressBar
         totalStages={plan.levels.length}
         currentStageIndex={state.currentLevelIndex}
@@ -122,53 +117,47 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
       <div className="flex-1 min-h-0 overflow-hidden px-4 py-4">
         <div className="grid h-full min-h-0 grid-cols-[24%_1.1fr_26%] gap-4">
           <div className="flex flex-col gap-4 min-h-0">
-            <div className="rounded-[32px] border-2 border-ink-700 bg-ink-900 p-4 shadow-[0_10px_0_rgba(0,0,0,0.18)]">
-              <div className="inline-flex items-center gap-2 rounded-full bg-ink-800 px-3 py-1 text-[10px] font-pixel uppercase tracking-[0.35em] text-gold-300">
+            <div className="bread-loaf p-4">
+              <div className="bread-crust-chip inline-flex items-center gap-2 px-3 py-1 text-[10px] font-pixel uppercase tracking-[0.35em]">
                 Stage {state.currentLevelIndex + 1}
               </div>
 
               <div className="mt-4 space-y-3">
-                <h2 className="text-xl font-bold uppercase tracking-[0.1em] text-parchment-100">
+                <h2 className="text-xl font-bold uppercase tracking-[0.1em] bread-strong">
                   {level.title}
                 </h2>
-                <p className="text-sm leading-relaxed text-parchment-300/80">
+                <p className="text-sm leading-relaxed bread-muted">
                   {currentTask?.description ?? 'Complete the task to advance the platformer.'}
                 </p>
               </div>
 
-              <div className="mt-5 rounded-[24px] border border-ink-700 bg-ink-800 p-4">
-                <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.35em] text-parchment-300/70">
+              <div className="bread-crumb mt-5 p-4">
+                <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.35em] bread-muted">
                   <span>Reward</span>
-                  <span className="font-mono text-gold-300">x{Math.max(1, Math.round(level.xpReward / 100))}</span>
+                  <span className="font-mono bread-title font-semibold">
+                    x{Math.max(1, Math.round(level.xpReward / 100))}
+                  </span>
                 </div>
                 <div className="mt-3 flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-ink-900 border border-ink-700 flex items-center justify-center text-2xl">
-                    📦
+                  <div className="w-12 h-12 rounded-2xl border-3 border-[#8b4e24] bg-[#f8edd4] flex items-center justify-center text-2xl shadow-[2px_2px_0_#5c3a22]">
+                    🍞
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-parchment-100">Stage reward</p>
-                    <p className="text-[11px] text-parchment-300">Finish the current challenge to progress.</p>
+                    <p className="text-sm font-semibold bread-strong">Stage reward</p>
+                    <p className="text-[11px] bread-muted">Finish the current challenge to progress.</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex-1 overflow-hidden rounded-[32px] border-2 border-ink-700 bg-ink-900 shadow-[0_10px_0_rgba(0,0,0,0.18)]">
+            <div className="bread-loaf flex-1 overflow-hidden">
               <FileExplorer levels={plan.levels} currentLevelIndex={state.currentLevelIndex} />
             </div>
           </div>
 
           <div className="flex flex-col gap-4 min-h-0">
-            <div className="rounded-[32px] border-2 border-ink-700 bg-ink-900 p-4 shadow-[0_10px_0_rgba(0,0,0,0.18)]">
-              <PlatformerTrack
-                tasks={level.tasks}
-                currentTaskIndex={state.currentTaskIndex}
-                characterState={state.characterState}
-              />
-            </div>
-
-            <div className="flex flex-col gap-4 min-h-0">
-              <div className="h-[520px] min-h-[520px] overflow-hidden rounded-[32px] border-2 border-ink-700 bg-ink-900 shadow-[0_10px_0_rgba(0,0,0,0.18)]">
+            <div className="bread-loaf h-[520px] min-h-[520px] overflow-hidden p-2">
+              <div className="h-full overflow-hidden rounded-[14px] border-[3px] border-[#5c3a22] bg-[#12100C]">
                 <EditorPanel
                   level={level}
                   code={code}
@@ -177,11 +166,15 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
                   currentTask={currentTask}
                 />
               </div>
-              <div className="grid grid-cols-1 gap-4 min-h-0">
-                <div className="h-64 overflow-hidden rounded-[32px] border-2 border-ink-700 bg-ink-900 shadow-[0_10px_0_rgba(0,0,0,0.18)]">
+            </div>
+            <div className="grid grid-cols-1 gap-4 min-h-0">
+              <div className="bread-loaf h-64 overflow-hidden p-2">
+                <div className="h-full overflow-hidden rounded-[14px] border-[3px] border-[#8b4e24]">
                   <OutputPreview code={code} language={level.language} />
                 </div>
-                <div className="h-64 overflow-hidden rounded-[32px] border-2 border-ink-700 bg-ink-900 shadow-[0_10px_0_rgba(0,0,0,0.18)]">
+              </div>
+              <div className="bread-loaf h-44 overflow-hidden p-2">
+                <div className="h-full overflow-hidden rounded-[14px] border-[3px] border-[#8b4e24]">
                   <TerminalPanel />
                 </div>
               </div>
@@ -189,24 +182,22 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
           </div>
 
           <div className="flex flex-col gap-4 min-h-0">
-            <div className="rounded-[32px] border-2 border-ink-700 bg-ink-900 p-4 shadow-[0_10px_0_rgba(0,0,0,0.18)]">
-              <span className="text-[9px] uppercase tracking-[0.35em] text-parchment-300/70">
+            <div className="bread-loaf p-4">
+              <span className="text-[9px] uppercase tracking-[0.35em] bread-muted font-pixel">
                 Current Objective
               </span>
-              <h3 className="mt-3 text-lg font-semibold text-parchment-100">{currentTask?.title}</h3>
-              <p className="mt-2 text-sm text-parchment-300 leading-relaxed">{currentTask?.description}</p>
+              <h3 className="mt-3 text-lg font-semibold bread-strong">{currentTask?.title}</h3>
+              <p className="mt-2 text-sm bread-muted leading-relaxed">{currentTask?.description}</p>
             </div>
 
-            <div className="rounded-[32px] border-2 border-ink-700 bg-ink-900 p-4 shadow-[0_10px_0_rgba(0,0,0,0.18)]">
+            <div className="bread-loaf p-3">
               <TaskChecklist tasks={level.tasks} currentTaskIndex={state.currentTaskIndex} />
             </div>
 
             {feedback && (
               <div
-                className={`rounded-[24px] border px-4 py-3 text-sm ${
-                  feedback.startsWith('Nice')
-                    ? 'border-gold-600 bg-gold-500/10 text-gold-300'
-                    : 'border-ember-500 bg-ember-500/10 text-ember-400'
+                className={`bread-crumb px-4 py-3 text-sm font-medium ${
+                  feedback.startsWith('Nice') ? 'text-[#5a7a2a]' : 'text-[#a33b2a]'
                 }`}
               >
                 {feedback}
@@ -214,8 +205,8 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
             )}
 
             {hintText && (
-              <div className="rounded-[24px] border border-arcane-500 bg-arcane-400/10 px-4 py-3 text-sm text-arcane-300">
-                <div className="text-[9px] uppercase tracking-[0.35em] text-parchment-300/70">Hint</div>
+              <div className="bread-crumb px-4 py-3 text-sm bread-strong">
+                <div className="text-[9px] uppercase tracking-[0.35em] bread-muted font-pixel">Hint</div>
                 <p className="mt-2">{hintText}</p>
               </div>
             )}

@@ -12,7 +12,7 @@ export function ActionButtons({ onHint, onCheck, onResources, isChecking, isHint
       <button
         onClick={onCheck}
         disabled={isChecking}
-        className="w-full bg-gold-500 hover:bg-gold-400 disabled:opacity-60 text-ink-950 font-pixel text-[10px] py-3 rounded-md shadow-pixel transition-colors retro-focus"
+        className="w-full bg-[#f0d264] hover:brightness-105 disabled:opacity-60 text-[#3b2415] font-pixel text-[10px] py-3 rounded-md border-[3px] border-[#8b4e24] shadow-[3px_3px_0_#5c3a22] transition-colors retro-focus"
       >
         {isChecking ? 'CHECKING…' : '✅ CHECK CODE'}
       </button>
@@ -20,13 +20,13 @@ export function ActionButtons({ onHint, onCheck, onResources, isChecking, isHint
         <button
           onClick={onHint}
           disabled={isHinting}
-          className="bg-ink-700 hover:bg-ink-600 disabled:opacity-60 text-arcane-300 font-pixel text-[9px] py-2.5 rounded-md border border-ink-600 transition-colors retro-focus"
+          className="bg-[#f8edd4] hover:bg-[#f0d9a8] disabled:opacity-60 text-[#5c3a22] font-pixel text-[9px] py-2.5 rounded-md border-[3px] border-[#8b4e24] transition-colors retro-focus"
         >
           {isHinting ? '…' : '💡 HINT'}
         </button>
         <button
           onClick={onResources}
-          className="bg-ink-700 hover:bg-ink-600 text-parchment-300 font-pixel text-[9px] py-2.5 rounded-md border border-ink-600 transition-colors retro-focus"
+          className="bg-[#f8edd4] hover:bg-[#f0d9a8] text-[#5c3a22] font-pixel text-[9px] py-2.5 rounded-md border-[3px] border-[#8b4e24] transition-colors retro-focus"
         >
           📖 DOCS
         </button>

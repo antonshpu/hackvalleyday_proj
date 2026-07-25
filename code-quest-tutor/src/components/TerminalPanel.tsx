@@ -15,12 +15,14 @@ export function TerminalPanel() {
 
     const term = new Terminal({
       theme: {
-        background: '#12100C',
-        foreground: '#EDE6D6',
-        cursor: '#F0CD7A',
+        background: '#f8edd4',
+        foreground: '#3b2415',
+        cursor: '#8b4e24',
+        selectionBackground: '#c47a3a55',
       },
-      fontFamily: 'JetBrains Mono, monospace',
-      fontSize: 13,
+      fontFamily: '"Press Start 2P", monospace',
+      fontSize: 10,
+      lineHeight: 16,
       cursorBlink: true,
       convertEol: true,
     });
@@ -79,26 +81,26 @@ export function TerminalPanel() {
   }
 
   return (
-    <div className="h-full flex flex-col bg-ink-950 border-2 border-ink-700 rounded-[28px] overflow-hidden">
-      <div className="h-10 shrink-0 flex items-center justify-between px-3 bg-ink-900 border-b border-ink-700">
+    <div className="h-full flex flex-col bg-[#f8edd4] overflow-hidden">
+      <div className="h-10 shrink-0 flex items-center justify-between px-3 bg-[#f0d9a8] border-b-[3px] border-[#8b4e24]/70">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-ember-500" />
-          <span className="w-2 h-2 rounded-full bg-gold-400" />
-          <span className="w-2 h-2 rounded-full bg-arcane-400" />
-          <span className="text-[10px] font-pixel tracking-widest text-parchment-300/80">TERMINAL</span>
+          <span className="w-2 h-2 rounded-full bg-[#a33b2a]" />
+          <span className="w-2 h-2 rounded-full bg-[#f0d264]" />
+          <span className="w-2 h-2 rounded-full bg-[#5a9e3e]" />
+          <span className="text-[9px] font-pixel tracking-widest text-[#5c3a22]">TERMINAL</span>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => termRef.current?.writeln('Running your code… see Live Preview panel for output.')}
-            className="rounded-md border border-ink-700 bg-ink-800 px-2 py-1 text-[10px] text-parchment-200 hover:bg-ink-700"
+            className="rounded-md border-[2px] border-[#8b4e24] bg-[#f0d264] px-2 py-1 text-[8px] font-pixel text-[#3b2415] hover:brightness-105"
           >
             RUN
           </button>
           <button
             type="button"
             onClick={() => termRef.current?.clear()}
-            className="rounded-md border border-ink-700 bg-ink-800 px-2 py-1 text-[10px] text-parchment-200 hover:bg-ink-700"
+            className="rounded-md border-[2px] border-[#8b4e24] bg-[#f8edd4] px-2 py-1 text-[8px] font-pixel text-[#5c3a22] hover:bg-[#f0d9a8]"
           >
             CLEAR
           </button>
@@ -107,7 +109,7 @@ export function TerminalPanel() {
       <div className="flex-1 min-h-0 px-3 py-2">
         <div
           ref={containerRef}
-          className="h-full rounded-2xl border border-ink-700 bg-[#12100C]"
+          className="h-full rounded-xl border-[2px] border-[#8b4e24]/60 bg-[#f8edd4]"
         />
       </div>
     </div>

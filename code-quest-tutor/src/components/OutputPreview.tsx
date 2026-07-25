@@ -14,9 +14,9 @@ function buildDocument(code: string, language: string) {
   <html>
     <head>
       <style>
-        body { font-family: 'IBM Plex Sans', sans-serif; background: #0B0A08; color: #EDE6D6; margin: 0; padding: 12px; font-size: 13px; }
-        #console-log div { padding: 3px 0; border-bottom: 1px solid #241F18; font-family: 'JetBrains Mono', monospace; }
-        canvas { background: #12100C; border: 1px solid #332C21; }
+        body { font-family: 'IBM Plex Sans', sans-serif; background: #f8edd4; color: #3b2415; margin: 0; padding: 12px; font-size: 13px; }
+        #console-log div { padding: 3px 0; border-bottom: 1px solid #c47a3a55; font-family: 'JetBrains Mono', monospace; }
+        canvas { background: #f0d9a8; border: 2px solid #8b4e24; }
       </style>
     </head>
     <body>
@@ -52,16 +52,16 @@ export function OutputPreview({ code, language }: Props) {
   const doc = useMemo(() => buildDocument(code, language), [code, language]);
 
   return (
-    <div className="h-full flex flex-col bg-ink-900">
-      <div className="h-10 shrink-0 flex items-center justify-between px-4 bg-ink-800 border-b border-ink-700">
-        <span className="text-[10px] font-pixel uppercase tracking-[0.35em] text-parchment-300/70">
+    <div className="h-full flex flex-col bg-[#f8edd4]">
+      <div className="h-10 shrink-0 flex items-center justify-between px-4 bg-[#f0d9a8] border-b-[3px] border-[#8b4e24]/70">
+        <span className="text-[10px] font-pixel uppercase tracking-[0.35em] text-[#5c3a22]">
           Output
         </span>
-        <span className="text-[10px] font-mono text-parchment-400">{language.toUpperCase()}</span>
+        <span className="text-[10px] font-mono text-[#7a5230] font-semibold">{language.toUpperCase()}</span>
       </div>
       <iframe
         title="Live output preview"
-        className="flex-1 w-full bg-[#0B0A08]"
+        className="flex-1 w-full bg-[#f8edd4]"
         sandbox="allow-scripts"
         srcDoc={doc}
       />
