@@ -195,7 +195,7 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
 
               {feedback && (
                 <div
-                  className={`bread-crumb px-4 py-3 text-sm font-medium shrink-0 ${
+                  className={`bread-crumb px-4 py-3 text-sm font-medium min-h-0 max-h-24 overflow-y-auto ${
                     feedback.startsWith('Nice') ? 'text-[#5a7a2a]' : 'text-[#a33b2a]'
                   }`}
                 >
@@ -204,14 +204,14 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
               )}
 
               {hintText && (
-                <div className="bread-crumb px-4 py-3 text-sm bread-strong shrink-0">
+                <div className="bread-crumb px-4 py-3 text-sm bread-strong min-h-0 max-h-24 overflow-y-auto">
                   <div className="text-[9px] uppercase tracking-[0.35em] bread-muted font-pixel">Hint</div>
                   <p className="mt-2">{hintText}</p>
                 </div>
               )}
             </div>
 
-            <div className="shrink-0">
+            <div className="shrink-0 mt-2">
               <ActionButtons
                 onHint={handleHint}
                 onCheck={handleCheck}
@@ -233,6 +233,7 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
 
       <SuccessCastOverlay
         celebrating={showSuccessCast}
+        dimmed={showLevelComplete}
         onCelebrateDone={() => setShowSuccessCast(false)}
       />
 

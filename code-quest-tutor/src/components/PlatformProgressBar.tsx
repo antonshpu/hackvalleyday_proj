@@ -7,7 +7,7 @@ interface Props {
 export function PlatformProgressBar({ totalStages, currentStageIndex, rewardStars = 3 }: Props) {
   return (
     <div className="px-4 py-3">
-      <div className="bread-loaf flex flex-col gap-3 px-4 py-4">
+      <div className="bread-loaf flex flex-col gap-3 px-4 py-4 !bg-[#f3dfb0]">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="text-[10px] font-pixel tracking-[0.45em] text-[#5c3a22] uppercase">

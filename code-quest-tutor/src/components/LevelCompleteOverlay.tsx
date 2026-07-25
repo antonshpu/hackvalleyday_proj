@@ -11,7 +11,7 @@ export function LevelCompleteOverlay({ levelTitle, xpEarned, onContinue, isFinal
   return (
     <div className="fixed inset-0 z-50 bg-ink-950/90 flex items-center justify-center backdrop-blur-sm">
       <div className="flex flex-col items-center gap-3 text-center px-6">
-        <CharacterSprite state="CELEBRATING" size={160} />
+        <CharacterSprite state="CELEBRATING" size={220} />
         <p className="font-pixel text-gold-400 text-xs tracking-widest mt-2">
           {isFinalLevel ? 'QUEST COMPLETE' : 'LEVEL COMPLETE'}
         </p>

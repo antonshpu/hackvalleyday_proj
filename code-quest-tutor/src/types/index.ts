@@ -49,6 +49,7 @@ export interface ValidationResult {
   matchedTasks: string[];
   errorLines?: number[];
   errorMessage?: string;
+  errors?: { message: string; line: number }[];
 }
 
 export interface HintResult {

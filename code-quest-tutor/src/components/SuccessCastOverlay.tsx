@@ -17,10 +17,11 @@ const LOOP_COUNT = 3;
 
 interface Props {
   celebrating: boolean;
+  dimmed?: boolean;
   onCelebrateDone?: () => void;
 }
 
-export function SuccessCastOverlay({ celebrating, onCelebrateDone }: Props) {
+export function SuccessCastOverlay({ celebrating, dimmed = false, onCelebrateDone }: Props) {
   const keyed = useChromaKeyedSrcs(FRAME_SRCS);
   const [castFrame, setCastFrame] = useState(0);
   const onDoneRef = useRef(onCelebrateDone);
@@ -67,10 +68,18 @@ export function SuccessCastOverlay({ celebrating, onCelebrateDone }: Props) {
 
   return (
     <div
-      className="pointer-events-none fixed inset-0 z-[60] flex items-start justify-start pt-[15%] pl-[35%]"
+      className={`pointer-events-none fixed inset-0 flex items-start justify-start pt-[15%] pl-[35%] ${
+        dimmed ? 'z-40 opacity-40' : 'z-[45]'
+      }`}
       aria-hidden
     >
-      <div className="relative h-16 w-16 sm:h-20 sm:w-20">
+      <div
+        className={`relative ${
+          celebrating
+            ? 'h-24 w-24 sm:h-28 sm:w-28 -translate-y-3'
+            : 'h-16 w-16 sm:h-20 sm:w-20'
+        }`}
+      >
         <img
           src={src}
           alt=""

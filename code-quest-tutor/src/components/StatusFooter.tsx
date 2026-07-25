@@ -12,7 +12,7 @@ export function StatusFooter({ name, level, onExitToHome, onResetProgress }: Pro
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <footer className="relative shrink-0 h-16 flex items-center gap-4 px-4 bread-loaf !rounded-none border-x-0 border-b-0">
+    <footer className="relative shrink-0 h-16 flex items-center gap-4 px-4 bread-loaf !rounded-none border-x-0 border-b-0 !bg-[#f3dfb0]">
       <div className="flex items-center gap-2 shrink-0">
         <div className="w-9 h-9 rounded-md bg-[#f8edd4] border-[3px] border-[#8b4e24] flex items-center justify-center overflow-hidden">
           <CharacterSprite state="IDLE" size={28} />
@@ -33,7 +33,7 @@ export function StatusFooter({ name, level, onExitToHome, onResetProgress }: Pro
           MENU <span aria-hidden>☰</span>
         </button>
         {menuOpen && (
-          <div className="absolute bottom-full right-0 mb-2 w-52 bread-loaf overflow-hidden animate-pop-in !rounded-xl">
+          <div className="absolute bottom-full right-0 mb-2 w-52 bread-loaf overflow-hidden animate-pop-in !rounded-xl !bg-[#f3dfb0]">
             <button
               onClick={() => {
                 setMenuOpen(false);

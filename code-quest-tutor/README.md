@@ -17,9 +17,6 @@ generic 5-level scaffold.
 
 ## What's real vs. mocked right now
 
-Per the brief, this ships with **mock Gemini responses** so the UI is fully
-testable without an API key:
-
 | Feature | Status |
 |---|---|
 | Monaco editor, task highlighting, read-only-feel boilerplate | ✅ Real |
@@ -27,24 +24,28 @@ testable without an API key:
 | Live output preview (iframe) | ✅ Real |
 | Terminal (xterm.js) | ✅ Real (local commands: `run`, `clear`, `help`) |
 | XP / level tracking, saved to `localStorage` | ✅ Real |
-| Project breakdown, code validation, hints | 🟡 Mocked — see `src/data/mockGemini.ts` |
+| Project breakdown, code validation, hints | ✅ Gemini when `GEMINI_API_KEY` is set; otherwise mock fallback |
 | Firebase auth / cloud sync | ⬜ Not included — currently uses `localStorage` |
 
-### Wiring up the real Gemini API
+### Wiring up the Gemini API
 
-`src/data/mockGemini.ts` has three functions with the exact input/output
-shape a real implementation should use:
+1. Create `code-quest-tutor/.env` from the example:
 
-- `mockBreakdownProject(prompt)` → `ProjectPlan`
-- `mockValidateCode(code, task)` → `ValidationResult`
-- `mockGenerateHint(task, hintLevel)` → `HintResult`
+```bash
+cp .env.example .env
+```
 
-To go live:
-1. Stand up a small Express server with routes like `POST /api/gemini/breakdown`.
-2. Call the Gemini API from that route only — **never put your API key in
-   the client**.
-3. Replace the body of each mock function with a `fetch()` to your route,
-   keeping the same return shape.
+2. Paste your key from [Google AI Studio](https://aistudio.google.com/apikey):
+
+```
+GEMINI_API_KEY=your_real_key_here
+```
+
+3. Restart the dev server (`npm start`). The key stays on the Vite server
+   (`/api/gemini/*`) and is never shipped to the browser.
+
+If the key is missing or a request fails, the app automatically falls back
+to `src/data/mockGemini.ts` mock responses.
 
 ### Wiring up Firebase
 

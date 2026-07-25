@@ -117,7 +117,7 @@ export function HomeScreen({
                 style={{ imageRendering: 'pixelated' }}
               />
               {isLoading ? (
-                <div className="absolute inset-0 flex items-center justify-center pb-[18%]">
+                <div className="absolute inset-0 flex items-center justify-center pb-[12%]">
                   <p className="font-pixel text-[10px] text-black animate-pulse">
                     Conjuring your quest map…
                   </p>

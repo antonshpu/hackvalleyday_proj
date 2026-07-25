@@ -2,22 +2,34 @@ import type { HintResult, Level, ProjectPlan, ValidationResult } from '../types'
 
 /**
  * ---------------------------------------------------------------------------
- * MOCK GEMINI LAYER
+ * GEMINI LAYER (real API with mock fallback)
  * ---------------------------------------------------------------------------
- * These three functions stand in for real calls to the Gemini API. Each one
- * mirrors the exact shape/contract a real implementation should return, so
- * swapping in the real API later only means replacing the function body.
- *
- * To wire up the real API:
- *  1. Create a `/api/gemini/breakdown`, `/api/gemini/validate`, and
- *     `/api/gemini/hint` route on an Express server (see README).
- *  2. Replace the body of each function below with a `fetch()` call to that
- *     route, keeping the same input/output types.
- *  3. Store your GEMINI_API_KEY server-side only — never in the client.
+ * When GEMINI_API_KEY is set in `.env`, these call the Vite `/api/gemini/*`
+ * middleware. If the key is missing or a request fails, they fall back to
+ * the local mock responses so the UI still works offline.
  * ---------------------------------------------------------------------------
  */
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function apiPost<T>(path: string, body: unknown): Promise<T | null> {
+  try {
+    const res = await fetch(path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      console.warn(`[gemini] ${path} failed:`, err.error || res.statusText);
+      return null;
+    }
+    return (await res.json()) as T;
+  } catch (err) {
+    console.warn(`[gemini] ${path} unreachable:`, err);
+    return null;
+  }
+}
 
 function slug(text: string) {
   return text
@@ -238,6 +250,9 @@ function genericPlan(name: string): ProjectPlan {
 }
 
 export async function mockBreakdownProject(prompt: string): Promise<ProjectPlan> {
+  const live = await apiPost<ProjectPlan>('/api/gemini/breakdown', { prompt });
+  if (live?.levels?.length) return live;
+
   await wait(1400);
   const lower = prompt.toLowerCase();
   if (lower.includes('flappy')) return TEMPLATES.flappy(prompt);
@@ -247,8 +262,11 @@ export async function mockBreakdownProject(prompt: string): Promise<ProjectPlan>
 
 export async function mockValidateCode(
   code: string,
-  task: { title: string; solutionHint: string[] }
+  task: { title: string; description?: string; solutionHint: string[] }
 ): Promise<ValidationResult> {
+  const live = await apiPost<ValidationResult>('/api/gemini/validate', { code, task });
+  if (live && typeof live.correct === 'boolean') return live;
+
   await wait(700);
   // Heuristic "validator": correct if the task marker comment was removed
   // or replaced with real code (more than just whitespace/comment).
@@ -292,13 +310,22 @@ export async function mockValidateCode(
       : task.title.toLowerCase().includes('canvas')
       ? `App critique: create a <canvas> element and set its width/height before calling getContext('2d').`
       : `Implementation issue: replace the task marker with working code for "${task.title}".`,
+    errors: correct
+      ? undefined
+      : (errorLines.length > 0 ? errorLines : taskMarkerLines).map((line) => ({
+          line,
+          message: 'Replace the task marker with working code.',
+        })),
   };
 }
 
 export async function mockGenerateHint(
-  task: { title: string; solutionHint: string[] },
+  task: { title: string; description?: string; solutionHint: string[] },
   hintLevel: number
 ): Promise<HintResult> {
+  const live = await apiPost<HintResult>('/api/gemini/hint', { task, hintLevel });
+  if (live?.hint) return live;
+
   await wait(600);
   const hints = task.solutionHint;
   const idx = Math.min(hintLevel, hints.length - 1);
