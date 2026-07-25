@@ -53,12 +53,15 @@ export function OutputPreview({ code, language }: Props) {
 
   return (
     <div className="h-full flex flex-col bg-ink-900">
-      <div className="h-8 shrink-0 flex items-center px-3 bg-ink-800 border-b border-ink-600">
-        <span className="text-[10px] font-pixel text-parchment-300/70">LIVE PREVIEW</span>
+      <div className="h-10 shrink-0 flex items-center justify-between px-4 bg-ink-800 border-b border-ink-700">
+        <span className="text-[10px] font-pixel uppercase tracking-[0.35em] text-parchment-300/70">
+          Output
+        </span>
+        <span className="text-[10px] font-mono text-parchment-400">{language.toUpperCase()}</span>
       </div>
       <iframe
         title="Live output preview"
-        className="flex-1 w-full bg-white"
+        className="flex-1 w-full bg-[#0B0A08]"
         sandbox="allow-scripts"
         srcDoc={doc}
       />

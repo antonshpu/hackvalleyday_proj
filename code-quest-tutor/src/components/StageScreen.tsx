@@ -97,10 +97,6 @@ export function StageScreen({ plan, level, profile, onStart, onExitToHome, onRes
       <StatusFooter
         name={profile.name}
         level={profile.level}
-        xpIntoLevel={profile.xpIntoLevel}
-        xpForNextLevel={profile.xpForNextLevel}
-        projects={profile.projectsCompleted}
-        streak={profile.streak}
         onExitToHome={onExitToHome}
         onResetProgress={onResetProgress}
       />

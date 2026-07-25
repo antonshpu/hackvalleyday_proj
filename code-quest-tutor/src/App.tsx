@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ProjectPlan } from './types';
 import { HomeScreen } from './components/HomeScreen';
-import { StageScreen } from './components/StageScreen';
 import { CodingEnvironment } from './components/CodingEnvironment';
 import { ProjectsScreen } from './components/ProjectsScreen';
 import { SettingsScreen } from './components/SettingsScreen';
@@ -10,7 +9,7 @@ import { useGameState } from './hooks/useGameState';
 import { useProfile } from './hooks/useProfile';
 import { loadPlan, savePlan } from './lib/storage';
 
-type Screen = 'home' | 'stage' | 'coding' | 'projects' | 'settings';
+type Screen = 'home' | 'coding' | 'projects' | 'settings';
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('home');
@@ -30,18 +29,18 @@ export default function App() {
     resetProgress();
     setPlan(result);
     setIsLoading(false);
-    setScreen('stage');
+    setScreen('coding');
   }
 
   function handleResumeQuest() {
-    if (plan) setScreen('stage');
+    if (plan) setScreen('coding');
   }
 
   function handleLevelContinue(isLastLevel: boolean) {
     if (isLastLevel) {
       setScreen('home');
     } else {
-      setScreen('stage');
+      setScreen('coding');
     }
   }
 
@@ -65,17 +64,6 @@ export default function App() {
           onResume={handleResumeQuest}
           onNavigate={setScreen}
           activeNav="home"
-        />
-      )}
-
-      {screen === 'stage' && plan && currentLevel && (
-        <StageScreen
-          plan={plan}
-          level={currentLevel}
-          profile={profile}
-          onStart={() => setScreen('coding')}
-          onExitToHome={() => setScreen('home')}
-          onResetProgress={handleResetQuestProgress}
         />
       )}
 

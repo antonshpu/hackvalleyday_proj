@@ -47,6 +47,8 @@ export interface ValidationResult {
   correct: boolean;
   feedback: string;
   matchedTasks: string[];
+  errorLines?: number[];
+  errorMessage?: string;
 }
 
 export interface HintResult {

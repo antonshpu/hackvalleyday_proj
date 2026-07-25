@@ -8,6 +8,10 @@ interface Props {
 }
 
 export function PlatformerTrack({ tasks, currentTaskIndex, characterState }: Props) {
+  const totalTasks = tasks.length;
+  // Calculate percentage progress along the track to position the character smoothly
+  const progressPercent = totalTasks > 1 ? (currentTaskIndex / (totalTasks - 1)) * 100 : 0;
+
   return (
     <div className="relative bg-ink-800 border-2 border-ink-600 rounded-md p-4 pb-8 overflow-hidden">
       {/* ambient stars */}
@@ -27,18 +31,39 @@ export function PlatformerTrack({ tasks, currentTaskIndex, characterState }: Pro
         ))}
       </div>
 
-      <div className="relative flex items-end gap-3 min-h-[128px]">
+      {/* Map Track Layer */}
+      <div className="absolute bottom-6 left-4 right-4 h-10 rounded-full bg-ink-900 pointer-events-none opacity-95 z-0" />
+      <div className="absolute bottom-6 left-4 right-4 flex items-center justify-between pointer-events-none z-0 px-4">
+        {tasks.map((_, i) => (
+          <div key={i} className="h-8 w-0.5 rounded-full bg-ink-700" />
+        ))}
+      </div>
+
+      {/* Sliding Character Runner across the map */}
+      <div 
+        className="absolute bottom-6 transition-all duration-500 ease-out z-20 pointer-events-none"
+        style={{ left: `calc(1rem + ${progressPercent}% * 0.85 - 24px)` }}
+      >
+        <CharacterSprite state={characterState} size={48} />
+      </div>
+
+      <div className="relative flex items-end gap-3 min-h-[128px] z-10">
         {tasks.map((task, i) => {
           const isCurrent = i === currentTaskIndex;
           const isDone = task.completed;
           return (
             <div key={task.id} className="flex flex-col items-center flex-1 min-w-0">
               <div className="h-16 flex items-end justify-center w-full relative">
-                {isCurrent && (
-                  <div className="absolute -top-4 flex flex-col items-center">
-                    <CharacterSprite state={characterState} size={64} />
-                  </div>
-                )}
+                {/* Checkpoint marker pin or node indicator */}
+                <div 
+                  className={`w-3 h-3 rounded-full border-2 transition-all ${
+                    isDone 
+                      ? 'bg-gold-400 border-gold-600 shadow-[0_0_8px_rgba(234,179,8,0.6)]' 
+                      : isCurrent 
+                      ? 'bg-arcane-400 border-arcane-200 animate-pulse' 
+                      : 'bg-ink-700 border-ink-600'
+                  }`} 
+                />
               </div>
               <div
                 className={`w-full h-4 rounded-sm border-2 ${

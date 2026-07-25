@@ -4,10 +4,6 @@ import { CharacterSprite } from './CharacterSprite';
 interface Props {
   name: string;
   level: number;
-  xpIntoLevel: number;
-  xpForNextLevel: number;
-  projects: number;
-  streak: number;
   onExitToHome: () => void;
   onResetProgress: () => void;
 }
@@ -15,15 +11,10 @@ interface Props {
 export function StatusFooter({
   name,
   level,
-  xpIntoLevel,
-  xpForNextLevel,
-  projects,
-  streak,
   onExitToHome,
   onResetProgress,
 }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const pct = Math.min(100, (xpIntoLevel / xpForNextLevel) * 100);
 
   return (
     <footer className="relative shrink-0 h-16 flex items-center gap-4 px-4 bg-ink-800 border-t-2 border-ink-600">
@@ -37,28 +28,6 @@ export function StatusFooter({
             <span aria-hidden>⭐</span> Level {level}
           </div>
         </div>
-      </div>
-
-      <div className="flex-1 min-w-[120px] flex items-center gap-2">
-        <span className="font-pixel text-[8px] text-parchment-300/60 tracking-wider">XP</span>
-        <div className="flex-1 h-2.5 bg-ink-600 rounded-full overflow-hidden">
-          <div className="h-full bg-gold-500" style={{ width: `${pct}%` }} />
-        </div>
-        <span className="font-mono text-[10px] text-parchment-300/60 whitespace-nowrap">
-          {xpIntoLevel} / {xpForNextLevel}
-        </span>
-      </div>
-
-      <div className="flex items-center gap-1.5 text-xs text-parchment-200 shrink-0">
-        <span aria-hidden>🍞</span>
-        <span className="font-mono">{projects}</span>
-        <span className="font-pixel text-[8px] text-parchment-300/50 ml-1">PROJECTS</span>
-      </div>
-
-      <div className="flex items-center gap-1.5 text-xs text-ember-400 shrink-0">
-        <span aria-hidden>🔥</span>
-        <span className="font-mono">{streak}</span>
-        <span className="font-pixel text-[8px] text-parchment-300/50 ml-1">STREAK</span>
       </div>
 
       <div className="relative shrink-0">

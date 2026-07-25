@@ -79,11 +79,37 @@ export function TerminalPanel() {
   }
 
   return (
-    <div className="h-full flex flex-col bg-ink-950">
-      <div className="h-8 shrink-0 flex items-center px-3 bg-ink-800 border-b border-ink-600">
-        <span className="text-[10px] font-pixel text-parchment-300/70">TERMINAL</span>
+    <div className="h-full flex flex-col bg-ink-950 border-2 border-ink-700 rounded-[28px] overflow-hidden">
+      <div className="h-10 shrink-0 flex items-center justify-between px-3 bg-ink-900 border-b border-ink-700">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-ember-500" />
+          <span className="w-2 h-2 rounded-full bg-gold-400" />
+          <span className="w-2 h-2 rounded-full bg-arcane-400" />
+          <span className="text-[10px] font-pixel tracking-widest text-parchment-300/80">TERMINAL</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => termRef.current?.writeln('Running your code… see Live Preview panel for output.')}
+            className="rounded-md border border-ink-700 bg-ink-800 px-2 py-1 text-[10px] text-parchment-200 hover:bg-ink-700"
+          >
+            RUN
+          </button>
+          <button
+            type="button"
+            onClick={() => termRef.current?.clear()}
+            className="rounded-md border border-ink-700 bg-ink-800 px-2 py-1 text-[10px] text-parchment-200 hover:bg-ink-700"
+          >
+            CLEAR
+          </button>
+        </div>
       </div>
-      <div ref={containerRef} className="flex-1 min-h-0 px-2 py-1" />
+      <div className="flex-1 min-h-0 px-3 py-2">
+        <div
+          ref={containerRef}
+          className="h-full rounded-2xl border border-ink-700 bg-[#12100C]"
+        />
+      </div>
     </div>
   );
 }

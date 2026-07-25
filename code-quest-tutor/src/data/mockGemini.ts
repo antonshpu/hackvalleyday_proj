@@ -261,14 +261,37 @@ export async function mockValidateCode(
     .map((l) => l.trim())
     .filter((l) => l.length > 0 && !l.startsWith('//'));
 
-  const correct = meaningfulLines.length >= 2;
+  const lines = code.split('\n');
+  const taskMarkerLines = lines
+    .map((line, idx) => ({ line, idx }))
+    .filter(({ line }) => line.includes('🟡 TASK'))
+    .map(({ idx }) => idx + 1);
+
+  const correct = meaningfulLines.length >= 2 && taskMarkerLines.length === 0;
+
+  const errorLines = taskMarkerLines.map((markerLine) => {
+    for (let i = markerLine; i < lines.length; i += 1) {
+      const trimmed = lines[i].trim();
+      if (trimmed.length === 0 || trimmed.startsWith('//')) continue;
+      return i + 1;
+    }
+    return markerLine;
+  });
 
   return {
     correct,
     feedback: correct
       ? `Nice work — "${task.title}" looks solid. Logic checks out.`
-      : `Not quite yet. The task comment is still there and no real implementation was added for "${task.title}".`,
+      : task.title.toLowerCase().includes('canvas')
+      ? `Not quite yet. Your app still has a placeholder comment instead of actually creating the canvas and sizing it.`
+      : `Not quite yet. Your app still has a placeholder comment instead of real implementation for "${task.title}".`,
     matchedTasks: correct ? [task.title] : [],
+    errorLines: correct ? [] : errorLines.length > 0 ? errorLines : taskMarkerLines,
+    errorMessage: correct
+      ? undefined
+      : task.title.toLowerCase().includes('canvas')
+      ? `App critique: create a <canvas> element and set its width/height before calling getContext('2d').`
+      : `Implementation issue: replace the task marker with working code for "${task.title}".`,
   };
 }
 
