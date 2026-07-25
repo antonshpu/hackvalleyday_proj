@@ -10,6 +10,7 @@ import { EditorPanel } from './EditorPanel';
 import { TaskChecklist } from './TaskChecklist';
 import { ActionButtons } from './ActionButtons';
 import { LevelCompleteOverlay } from './LevelCompleteOverlay';
+import { SuccessCastOverlay } from './SuccessCastOverlay';
 
 interface Props {
   plan: ProjectPlan;
@@ -31,6 +32,7 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
   const [hintText, setHintText] = useState<string | null>(null);
   const [hintLevel, setHintLevel] = useState(0);
   const [showLevelComplete, setShowLevelComplete] = useState(false);
+  const [showSuccessCast, setShowSuccessCast] = useState(false);
 
   // reset editor content whenever we move to a new level
   useEffect(() => {
@@ -52,6 +54,7 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
     setIsChecking(false);
 
     if (result.correct) {
+      setShowSuccessCast(true);
       setCharacterState('WALKING');
       setFeedback(result.feedback);
       setTimeout(() => {
@@ -226,6 +229,11 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
         level={profile.level}
         onExitToHome={onExitToHome}
         onResetProgress={resetProgress}
+      />
+
+      <SuccessCastOverlay
+        celebrating={showSuccessCast}
+        onCelebrateDone={() => setShowSuccessCast(false)}
       />
 
       {showLevelComplete && (
