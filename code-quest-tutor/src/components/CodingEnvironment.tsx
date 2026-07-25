@@ -153,16 +153,25 @@ export function CodingEnvironment({ plan, profile, onLevelContinue, onExitToHome
             </div>
           </div>
 
-          <div className="flex flex-col min-h-0 h-full">
-            <div className="bread-loaf h-[340px] min-h-[280px] shrink-0 overflow-hidden p-2 mt-auto">
-              <div className="h-full overflow-hidden rounded-[14px] border-[3px] border-[#5c3a22] bg-[#12100C]">
-                <EditorPanel
-                  level={level}
-                  code={code}
-                  onChange={setCode}
-                  validationErrors={validationErrors}
-                  currentTask={currentTask}
-                />
+          <div className="flex flex-col min-h-0 h-full justify-center">
+            <div className="flex flex-col items-center w-full -mt-10">
+              <img
+                src="/coding-platform.png"
+                alt=""
+                aria-hidden
+                className="relative z-10 w-full max-w-full h-auto object-contain select-none pointer-events-none drop-shadow-[2px_3px_0_rgba(0,0,0,0.2)]"
+                style={{ imageRendering: 'pixelated' }}
+              />
+              <div className="relative z-0 bread-loaf w-full h-[340px] min-h-[280px] shrink-0 overflow-hidden p-2 -mt-28">
+                <div className="h-full overflow-hidden rounded-[14px] border-[3px] border-[#5c3a22] bg-[#12100C]">
+                  <EditorPanel
+                    level={level}
+                    code={code}
+                    onChange={setCode}
+                    validationErrors={validationErrors}
+                    currentTask={currentTask}
+                  />
+                </div>
               </div>
             </div>
           </div>
